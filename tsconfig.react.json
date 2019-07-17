@@ -20,6 +20,6 @@
     "jsx": "react",
 
   },
-  "include": ["src/client"],
+  "include": ["src"],
   "exclude": ["dist", "static", "src/server", "test", "node_modules"]
 }

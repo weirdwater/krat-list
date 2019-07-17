@@ -11,6 +11,6 @@
     "baseUrl": "./",
     "incremental": true
   },
-  "include": ["src/server"],
-  "exclude": ["node_modules", "src/client"]
+  "include": ["src"],
+  "exclude": ["node_modules", "src/client", "dist", "static"]
 }
