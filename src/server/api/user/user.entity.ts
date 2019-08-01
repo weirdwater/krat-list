@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToMany, ManyToOne } from "typeorm";
+import { Session } from "../auth/session.entity";
 
 @Entity()
 export class User {
@@ -29,5 +30,8 @@ export class User {
 
   @Column()
   active: boolean
+
+  @ManyToOne(type => Session, session => session.user)
+  sessions: Session[]
 
 }

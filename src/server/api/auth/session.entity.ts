@@ -1,5 +1,5 @@
 import { User } from '../user/user.entity';
-import { Column, CreateDateColumn, PrimaryGeneratedColumn, Entity } from 'typeorm';
+import { Column, CreateDateColumn, PrimaryGeneratedColumn, Entity, ManyToMany, OneToMany, JoinColumn } from 'typeorm';
 
 @Entity()
 export class Session {
@@ -13,6 +13,7 @@ export class Session {
   @Column()
   ip: string
 
-  
+  @OneToMany(type => User, user => user.sessions)
+  @JoinColumn()
   user: User
 }
