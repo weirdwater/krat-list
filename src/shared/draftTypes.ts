@@ -9,6 +9,8 @@ interface User {
   created: Date
   updated: Date
   encryptedPassword: string
+  emailConfirmed: boolean
+  active: boolean
 }
 
 interface Session {
