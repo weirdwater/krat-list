@@ -5,6 +5,7 @@ export const TextInput = (props: {
   value: Maybe<string>
   type?: 'text' | 'password' | 'email'
   autoComplete?: 'current-password' | 'new-password' | 'username'
+  disabled?: boolean
   onChange: (x: Maybe<string>) => void
   id: string
 }) => <input
@@ -12,6 +13,7 @@ export const TextInput = (props: {
   value={isSome(props.value) ? props.value.v : ''}
   type={props.type || 'text'}
   autoComplete={props.autoComplete}
+  disabled={props.disabled}
   onChange={e => {
     const { value } = e.target
     props.onChange(value !== '' ? some(value) : none())
