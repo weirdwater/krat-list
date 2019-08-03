@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToMany, ManyToOne } from "typeorm";
 import { Session } from "../auth/session.entity";
+import { Exclude } from 'class-transformer'
 
 @Entity()
 export class User {
@@ -10,10 +11,10 @@ export class User {
   @Column()
   name: string
 
-  @Column()
+  @Column({ unique: true })
   email: string
 
-  @Column()
+  @Column({ nullable: true })
   avatar: string
 
   @CreateDateColumn()
@@ -22,15 +23,19 @@ export class User {
   @UpdateDateColumn()
   updated: Date
 
+  @Exclude()
   @Column()
   encryptedPassword: string
 
-  @Column()
+  @Exclude()
+  @Column({ default: false })
   emailConfirmed: boolean
 
-  @Column()
+  @Exclude()
+  @Column({ default: false })
   active: boolean
 
+  @Exclude()
   @ManyToOne(type => Session, session => session.user)
   sessions: Session[]
 

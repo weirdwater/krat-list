@@ -8,6 +8,6 @@ export const dbConfigFactory = async (configService: ConfigService): Promise<Con
   username: configService.postgresUser,
   password: configService.postgresPassword,
   database: configService.postgresDatabase,
-  entities: [ __dirname + '/**/*.entity.ts', __dirname + '/**/*.entity.js' ],
+  entities: [ __dirname + '/**/*.entity{.ts,.js}' ],
   synchronize: configService.typeOrmSync,
 })
