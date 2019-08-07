@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToMany, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm";
 import { Session } from "../auth/session.entity";
 import { Exclude } from 'class-transformer'
 
@@ -36,7 +36,7 @@ export class User {
   active: boolean
 
   @Exclude()
-  @ManyToOne(type => Session, session => session.user)
+  @OneToMany(type => Session, session => session.user)
   sessions: Session[]
 
 }

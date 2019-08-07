@@ -4,7 +4,7 @@ import { CreateUserDTO } from 'src/shared/dto';
 import { User as UserEntity } from './user.entity';
 import * as bcrypt from 'bcrypt'
 import { AuthGuard } from '@nestjs/passport';
-import { User } from './user.decorator'
+import { CurrentUser } from './user.decorator'
 
 @Controller('api/v1/user')
 export class UserController {
@@ -25,7 +25,7 @@ export class UserController {
 
   @Get('me')
   @UseGuards(AuthGuard())
-  self(@User() user: UserEntity): UserEntity {
+  self(@CurrentUser() user: UserEntity): UserEntity {
     return user
   }
 
