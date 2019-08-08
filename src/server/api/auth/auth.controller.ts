@@ -4,13 +4,18 @@ import { AuthService } from './auth.service';
 import { AuthenticateUserDTO } from 'src/shared/dto';
 import { isNone } from 'src/shared/fun';
 import { Session } from './session.entity';
+import { ApiUseTags, ApiResponse, ApiCreatedResponse, ApiBadRequestResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
 @Controller('api/v1/auth')
+@ApiUseTags('authentication')
 export class AuthController {
 
   constructor(private readonly authService: AuthService) {}
 
   @Post()
+  @ApiCreatedResponse({ description: 'The authentication attempt was successful' })
+  @ApiBadRequestResponse({ description: 'The provided body did not match what expected' })
+  @ApiUnauthorizedResponse({ description: 'The authentication attempt failed' })
   @UsePipes(ValidationPipe)
   async authenticate(@Body() credentials: AuthenticateUserDTO, @Req() req: Request): Promise<string> {
 
