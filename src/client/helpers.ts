@@ -10,3 +10,26 @@ export const isNowTrue = <a,b>(p: (_: b) => boolean) => (getProperty: (s: a) => 
 
   return true
 }
+
+export interface QueryParameters {
+  [parameter: string]: string
+}
+
+export const createQueryString = (params: QueryParameters): string => `?${Object.entries(params).map(p => `${p[0]}=${p[1]}`).join('&')}`
+
+export const getQueryParams = (query: string): QueryParameters => {
+  const startQueryString = query.indexOf('?')
+
+  if (startQueryString === -1) {
+    return {}
+  }
+
+  const queryString = query.substring(startQueryString + 1)
+
+  if (queryString.length === 0) {
+    return {}
+  }
+
+  return queryString.split('&').map(p => p.split('='))
+                    .reduce((o, p) => ({...o, [p[0]]: p[1]}), {})
+}
