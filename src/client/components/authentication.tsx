@@ -32,7 +32,6 @@ export function Authentication<a,>(props: {
   }, [props.state])
 
   useEffect(() => {
-    console.log('registration loading hook hit')
     if (registrationIsNowLoading(props.state, prevState)) {
       const { email, name, password } = props.state as RegisterState
       if (isNone(email) || isNone(name) || isNone(password)) {
