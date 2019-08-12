@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, UsePipes, ValidationPipe, UseInterceptors, ClassSerializerInterceptor, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDTO } from 'src/shared/dto';
+import { CreateUserDTO, UserSelfDTO } from 'src/shared/dto';
 import { User as UserEntity } from './user.entity';
 import * as bcrypt from 'bcrypt'
 import { AuthGuard } from '@nestjs/passport';
@@ -18,7 +18,7 @@ export class UserController {
   @ApiBadRequestResponse({ description: 'The provided body did not match what expected' })
   @UsePipes(ValidationPipe)
   @UseInterceptors(ClassSerializerInterceptor)
-  async register(@Body() dto: CreateUserDTO): Promise<UserEntity> {
+  async register(@Body() dto: CreateUserDTO): Promise<UserSelfDTO> {
     const user = new UserEntity()
     user.email = dto.email
     user.name = dto.name
@@ -32,7 +32,8 @@ export class UserController {
   @ApiOkResponse({ description: 'Successfuly retrieved the authenticated user' })
   @ApiUnauthorizedResponse({ description: 'User not authenticated (properly)' })
   @UseGuards(AuthGuard())
-  self(@CurrentUser() user: UserEntity): UserEntity {
+  @UseInterceptors(ClassSerializerInterceptor)
+  self(@CurrentUser() user: UserEntity): UserSelfDTO {
     return user
   }
 

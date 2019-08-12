@@ -19,17 +19,21 @@ export const createQueryString = (params: QueryParameters): string => `?${Object
 
 export const getQueryParams = (query: string): QueryParameters => {
   const startQueryString = query.indexOf('?')
-
   if (startQueryString === -1) {
     return {}
   }
 
   const queryString = query.substring(startQueryString + 1)
-
   if (queryString.length === 0) {
     return {}
   }
 
-  return queryString.split('&').map(p => p.split('='))
+  return queryString.split('&')
+                    .map(p => p.split('='))
                     .reduce((o, p) => ({...o, [p[0]]: p[1]}), {})
+}
+
+export const preventDefault = <a extends { preventDefault: () => void }>(f: (e: a) => void) => (e: a) => {
+  e.preventDefault()
+  f(e)
 }

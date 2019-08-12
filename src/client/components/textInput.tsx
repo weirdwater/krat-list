@@ -3,10 +3,10 @@ import { isSome, none, some, Maybe } from '../../shared/fun';
 
 export const TextInput = (props: {
   value: Maybe<string>
-  type?: 'text' | 'password' | 'email'
-  autoComplete?: 'current-password' | 'new-password' | 'username'
+  type?: 'text' | 'password' | 'email' | 'hidden'
+  autoComplete?: 'current-password' | 'new-password' | 'username' | 'email' | 'name'
   disabled?: boolean
-  onChange: (x: Maybe<string>) => void
+  onChange?: (x: Maybe<string>) => void
   id: string
 }) => <input
   id={props.id}
@@ -16,6 +16,6 @@ export const TextInput = (props: {
   disabled={props.disabled}
   onChange={e => {
     const { value } = e.target
-    props.onChange(value !== '' ? some(value) : none())
+    props.onChange && props.onChange(value !== '' ? some(value) : none())
   }}
 />

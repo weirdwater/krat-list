@@ -1,5 +1,6 @@
 import { Maybe, Some } from '../../shared/fun'
 import { Async, AsyncLoaded } from '../../shared/async'
+import { UserSelf } from '../api/types';
 
 export interface User {
   id: string
@@ -30,6 +31,7 @@ export interface RegisterContactStepState {
 export interface RegisterPasswordStepState {
   auth: 'register'
   step: 'password'
+  registered: Async<UserSelf>
   email: Some<string>
   name: Some<string>
   password: Maybe<string>
@@ -39,7 +41,7 @@ export interface RegisterPasswordStepState {
 export interface RegisterCompleteState {
   auth: 'register'
   step: 'complete'
-  registered: Async<boolean>
+  registered: AsyncLoaded<UserSelf>
   email: Some<string>
   password: Some<string>
   passwordCheck: Some<string>

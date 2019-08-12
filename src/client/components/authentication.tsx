@@ -1,15 +1,18 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
+import { Async, isError, isLoading, mkError } from '../../shared/async';
+import { none, some } from '../../shared/fun';
+import { UserSelf } from '../api/types';
+import { BeerAppState } from '../beerApp';
+import { isNowTrue } from '../helpers';
+import { usePrevious } from '../hooks';
 import { AuthenticatedState, AuthState, isAuthenticated, isLogin, isRegister, User } from '../types/authentication';
 import { StateUpdater } from '../types/state';
 import { LoginForm } from './loginForm';
-import { mkPristine, isLoading, isError, mkError, Async } from '../../shared/async';
-import { usePrevious } from '../hooks';
-import { Maybe, some, none, isNone, isSome } from '../../shared/fun';
-import { BeerAppState } from '../beerApp';
-import { isNowTrue } from '../helpers';
+import { RegistrationForm } from './registrationForm';
 
 const sessionIsNowLoading = isNowTrue<BeerAppState, Async<string>>(isLoading)(s => isLogin(s) ? some(s.session) : none())
 const userIsNowLoading = isNowTrue<BeerAppState, Async<User>>(isLoading)(s => isLogin(s) ? some(s.user) : none())
+const registrationIsNowLoading = isNowTrue<BeerAppState, Async<UserSelf>>(isLoading)(s => isRegister(s) && s.step === 'password' ? some(s.registered) : none())
 
 export function Authentication<a,>(props: {
   state: AuthState<a>
@@ -27,6 +30,12 @@ export function Authentication<a,>(props: {
     }
   }, [props.state])
 
+  useEffect(() => {
+    if (registrationIsNowLoading(props.state, prevState)) {
+      console.log('Performing registration')
+    }
+  }, [props.state])
+
   if (isAuthenticated(props.state)) {
     return <>{props.app(props.state)}</>
   }
@@ -38,19 +47,7 @@ export function Authentication<a,>(props: {
     </div>
   }
 
-  return <div>
-    registration
-    <a href="#" onClick={e => {
-      e.preventDefault()
-      props.updateState(s => isRegister(s) ? {
-        auth: 'login',
-        email: s.email,
-        password: s.password,
-        user: mkPristine(),
-        session: mkPristine()
-      } : s )}}
-    >Log in</a>
-  </div>
+  return <RegistrationForm<a> state={props.state} updateState={a => props.updateState(s => isRegister(s) ? a(s) : s)} />
 
 }
 
