@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react';
-import { Async, isError, isLoading, mkError } from '../../shared/async';
-import { none, some } from '../../shared/fun';
+import { Async, isError, isLoading, mkError, mkLoaded } from '../../shared/async';
+import { none, some, isNone } from '../../shared/fun';
 import { UserSelf } from '../api/types';
 import { BeerAppState } from '../beerApp';
-import { isNowTrue } from '../helpers';
+import { isNowTrue, createQueryString } from '../helpers';
 import { usePrevious } from '../hooks';
-import { AuthenticatedState, AuthState, isAuthenticated, isLogin, isRegister, User } from '../types/authentication';
+import { AuthenticatedState, AuthState, isAuthenticated, isLogin, isRegister, User, RegisterState, RegisterCompleteState } from '../types/authentication';
 import { StateUpdater } from '../types/state';
 import { LoginForm } from './loginForm';
 import { RegistrationForm } from './registrationForm';
+import * as Api from '../api'
 
 const sessionIsNowLoading = isNowTrue<BeerAppState, Async<string>>(isLoading)(s => isLogin(s) ? some(s.session) : none())
 const userIsNowLoading = isNowTrue<BeerAppState, Async<User>>(isLoading)(s => isLogin(s) ? some(s.user) : none())
@@ -31,8 +32,24 @@ export function Authentication<a,>(props: {
   }, [props.state])
 
   useEffect(() => {
+    console.log('registration loading hook hit')
     if (registrationIsNowLoading(props.state, prevState)) {
-      console.log('Performing registration')
+      const { email, name, password } = props.state as RegisterState
+      if (isNone(email) || isNone(name) || isNone(password)) {
+        return props.updateState(s => isRegister(s) && s.step === 'password' ? {...s, registered: mkError('Alle velden moeten voorzien zijn van informatie.')} : s)
+      }
+      Api.registerUser({ email, name, password })
+        .then(u => props.updateState(s => {
+          if (!isRegister(s) || s.step !== 'password') {
+            return s
+          }
+          const{ password, passwordCheck } = s
+          if (isNone(password) || isNone(passwordCheck)) {
+            return s
+          }
+          return {...s, step: 'complete', registered: mkLoaded(u), password, passwordCheck }
+        }))
+        .catch(e => props.updateState(s => isRegister(s) && s.step === 'password' ? {...s, registered: mkError(e.toString())} : s))
     }
   }, [props.state])
 

@@ -15,7 +15,7 @@ export interface QueryParameters {
   [parameter: string]: string
 }
 
-export const createQueryString = (params: QueryParameters): string => `?${Object.entries(params).map(p => `${p[0]}=${p[1]}`).join('&')}`
+export const createQueryString = (params: QueryParameters): string => `?${Object.entries(params).map(p => p.map(s => encodeURIComponent(s)).join('=')).join('&')}`
 
 export const getQueryParams = (query: string): QueryParameters => {
   const startQueryString = query.indexOf('?')
