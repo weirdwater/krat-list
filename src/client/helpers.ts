@@ -37,3 +37,5 @@ export const preventDefault = <a extends { preventDefault: () => void }>(f: (e: 
   e.preventDefault()
   f(e)
 }
+
+export const toFormattedJSON = (obj: any) => JSON.stringify(obj, null, 2)

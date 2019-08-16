@@ -14,7 +14,7 @@ export interface User {
 export interface LoginState {
   auth: 'login'
   session: Async<string>
-  user: Async<User>
+  user: Async<UserSelf>
   email: Maybe<string>
   password: Maybe<string>
 }
@@ -53,7 +53,7 @@ export type RegisterState = RegisterContactStepState | RegisterPasswordStepState
 export interface AuthenticatedState<a> {
   auth: 'authenticated'
   session: AsyncLoaded<string>
-  user: AsyncLoaded<User>
+  user: AsyncLoaded<UserSelf>
   appState: a
 }
 

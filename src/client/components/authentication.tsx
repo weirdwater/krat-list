@@ -1,22 +1,23 @@
 import React, { useEffect } from 'react';
-import { Async, isError, isLoading, mkError, mkLoaded } from '../../shared/async';
+import { Async, isError, isLoading, mkError, mkLoaded, mkLoading, isLoaded } from '../../shared/async';
 import { none, some, isNone } from '../../shared/fun';
 import { UserSelf } from '../api/types';
 import { BeerAppState } from '../beerApp';
 import { isNowTrue, createQueryString } from '../helpers';
 import { usePrevious } from '../hooks';
-import { AuthenticatedState, AuthState, isAuthenticated, isLogin, isRegister, User, RegisterState, RegisterCompleteState } from '../types/authentication';
+import { AuthenticatedState, AuthState, isAuthenticated, isLogin, isRegister, User, RegisterState, RegisterCompleteState, LoginState } from '../types/authentication';
 import { StateUpdater } from '../types/state';
 import { LoginForm } from './loginForm';
 import { RegistrationForm } from './registrationForm';
 import * as Api from '../api'
 
 const sessionIsNowLoading = isNowTrue<BeerAppState, Async<string>>(isLoading)(s => isLogin(s) ? some(s.session) : none())
-const userIsNowLoading = isNowTrue<BeerAppState, Async<User>>(isLoading)(s => isLogin(s) ? some(s.user) : none())
+const userIsNowLoading = isNowTrue<BeerAppState, Async<UserSelf>>(isLoading)(s => isLogin(s) ? some(s.user) : none())
 const registrationIsNowLoading = isNowTrue<BeerAppState, Async<UserSelf>>(isLoading)(s => isRegister(s) && s.step === 'password' ? some(s.registered) : none())
 
 export function Authentication<a,>(props: {
   state: AuthState<a>
+  initialAppState: a
   updateState: StateUpdater<AuthState<a>>
   app: (s: AuthenticatedState<a>) => React.ReactNode
 }) {
@@ -24,9 +25,25 @@ export function Authentication<a,>(props: {
 
   useEffect(() => {
     if (sessionIsNowLoading(props.state, prevState)) {
-      new Promise(r => setTimeout(r, 5000)).then(() => {
-        props.updateState(s => isLogin(s) ? {...s, session: mkError('Oops')} : s)
-      })
+      const { email, password } = props.state as LoginState
+      if (isNone(email) || isNone(password)) {
+        return props.updateState(s => isLogin(s) ? { ...s, session: mkError('Om in te kunnen loggen zijn je e-mail en wachtwoord nodig.') } : s)
+      }
+      Api.authenticateUser({ email, password })
+        .then(token => props.updateState(s => isLogin(s) ? { ...s, session: mkLoaded(token), user: mkLoading() } : s))
+        .catch(e => props.updateState(s => isLogin(s) ? { ...s, session: mkError('Om in te kunnen loggen zijn je e-mail en wachtwoord nodig.') } : s))
+    }
+  }, [props.state])
+
+  useEffect(() => {
+    if (userIsNowLoading(props.state, prevState)) {
+      const { session } = props.state as LoginState
+      if (!isLoaded(session)) {
+        return props.updateState(s => isLogin(s) ? { ...s, user: mkError('Gebruikersdata kan niet worden opgevraagd zonder authenticatie.') } : s)
+      }
+      Api.self(session.v)
+        .then(u => props.updateState(s => isLogin(s) ? { auth: 'authenticated', user: mkLoaded(u), session, appState: props.initialAppState } : s))
+        .catch(e => props.updateState(s => isLogin(s) ? { ...s, user: mkError(e) } : s))
     }
   }, [props.state])
 
