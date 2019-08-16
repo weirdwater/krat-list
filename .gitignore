@@ -2,6 +2,7 @@
 /dist
 /node_modules
 /static/assets/compiled/*
+schema.gql
 
 # Logs
 logs

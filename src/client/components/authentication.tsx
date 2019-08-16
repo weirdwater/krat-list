@@ -25,7 +25,6 @@ export function Authentication<a,>(props: {
   useEffect(() => {
     if (sessionIsNowLoading(props.state, prevState)) {
       new Promise(r => setTimeout(r, 5000)).then(() => {
-        console.log('oops')
         props.updateState(s => isLogin(s) ? {...s, session: mkError('Oops')} : s)
       })
     }

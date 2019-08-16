@@ -6,6 +6,7 @@ import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConnectionOptions } from 'typeorm';
+import { GraphQLModule } from '@nestjs/graphql';
 
 export const dbConfigFactory = async (configService: ConfigService): Promise<ConnectionOptions> => ({
   type: 'postgres',
@@ -27,6 +28,9 @@ export const dbConfigFactory = async (configService: ConfigService): Promise<Con
       inject: [ConfigService],
     }),
     ApiModule,
+    GraphQLModule.forRoot({
+      autoSchemaFile: 'schema.gql'
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
