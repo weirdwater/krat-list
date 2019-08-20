@@ -39,6 +39,19 @@ export const none = (): None => left(unit())
 
 export const some = <a>(_: a): Some<a> => right<a>(_)
 
+export const mkMaybe = <a>(_: a | undefined | null): Maybe<a> => _ === undefined || _ === null ? none() : some(_)
+
 export const isSome = isRight
 
 export const isNone = isLeft
+
+export const ifEither = <a, b>(f: (_: a) => void, g: (_: b) => void) => (x: Either<a, b>) => isLeft(x) ? f(x.v) : g(x.v)
+
+export const ifLeft = <a, b>(f: (_: a) => void) => ifEither<a, b>(f, () => {})
+
+export const ifRight = <a, b>(f: (_: b) => void) => ifEither<a, b>(_ => {}, f)
+
+// TODO: Find a way to predefine only part of the types.
+export const ifNone = ifLeft
+
+export const ifSome = ifRight

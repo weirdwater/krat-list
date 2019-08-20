@@ -1,12 +1,10 @@
-import { Some } from '../../../src/shared/fun'
+import { Some, Maybe, none, some, mkMaybe } from '../../../src/shared/fun'
 import { apiUrl } from '.';
 import { UserSelf, dtoToUserSelf } from './types';
 import { UserSelfDTO } from '../../shared/dto';
 import { BadRegistrationRequestException, ApiException, BadAuthenticationRequestException } from './exceptions';
 
-
 export const registerUser = async (formData: { email: Some<string>, password: Some<string>, name: Some<string> }): Promise<UserSelf> => {
-
   const res = await fetch(apiUrl('user'), {
     method: 'post',
     headers: {
@@ -33,7 +31,6 @@ export const registerUser = async (formData: { email: Some<string>, password: So
 }
 
 export const authenticateUser = async (formData: { email: Some<string>, password: Some<string> }): Promise<string> => {
-
   const res = await fetch(apiUrl('auth'), {
     method: 'post',
     headers: {
@@ -55,5 +52,14 @@ export const authenticateUser = async (formData: { email: Some<string>, password
   }
 
   throw new ApiException('Something went wrong authenticating the user')
-
 }
+
+const sessionCookie = 'sessionToken'
+
+// TODO: Use cookies in stead of localstorage
+export const loadSessionToken = (): Maybe<string> => mkMaybe(window.localStorage.getItem(sessionCookie))
+
+// TODO: Use cookies in stead of localstorage
+export const saveSessionToken = (t: string) => window.localStorage.setItem(sessionCookie, t)
+
+
