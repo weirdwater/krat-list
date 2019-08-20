@@ -20,11 +20,18 @@ interface Session {
   ip: string
 }
 
-interface Consumption {
+interface ConsumptionReport {
   id: string
   reporter: User
-  consumer: User
   reported: Date
+  consumptions: Consumption[]
+  group: Group
+}
+
+interface Consumption {
+  id: string
+  consumer: User
+  units: number
 }
 
 interface Group {
@@ -36,7 +43,7 @@ interface Group {
   mlPerBeer: number
   caseRankings: Map<string, CaseRanking>
   casePurchases: CasePurchase[]
-  consumptions: Consumption[]
+  consumptionReports: ConsumptionReport[]
 }
 
 interface CaseRanking {
