@@ -43,7 +43,7 @@ export class User {
 
   @Field(type => Boolean)
   @Exclude()
-  @Column({ default: false })
+  @Column({ default: true })
   active: boolean
 
   // @Field(type => [Session])

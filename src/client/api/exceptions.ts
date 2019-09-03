@@ -46,3 +46,20 @@ export class UnauthorizedException extends ApiException {
 
 }
 
+export class EmailNotConfirmedException extends ApiException {
+
+  constructor(m: string) {
+    super(m)
+    this.name = 'EmailNotConfirmedException'
+  }
+
+}
+
+export class UserDeactivatedException extends ApiException {
+
+  constructor(m: string) {
+    super(m)
+    this.name = 'UserDeactivatedException'
+  }
+
+}

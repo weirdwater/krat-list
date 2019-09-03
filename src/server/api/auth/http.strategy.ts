@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { Injectable, UnauthorizedException, ForbiddenException } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-http-bearer'
 import { AuthService } from './auth.service';
@@ -16,6 +16,14 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
 
     if (isNone(user)) {
       throw new UnauthorizedException()
+    }
+
+    if (!user.v.active) {
+      throw new ForbiddenException('User account disabled')
+    }
+
+    if (!user.v.emailConfirmed) {
+      throw new ForbiddenException('User email not confirmed')
     }
 
     return user.v
