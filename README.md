@@ -19,4 +19,4 @@ yarn webpack
 
 Server runs at [localhost:3000](http://localhost:3000)
 
-Built with NestJS and React
+Built with [NestJS](https://www.nestjs.com) and [React](https://reactjs.org/) in [Typescript](https://www.typescriptlang.org/)
