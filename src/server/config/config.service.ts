@@ -61,4 +61,9 @@ export class ConfigService {
     return Boolean(this.envConfig.ORM_SYNC)
   }
 
+  get verificationTokenExpirationTimeout(): number {
+    const dayInMs = 86400000
+    return dayInMs * 7
+  }
+
 }
