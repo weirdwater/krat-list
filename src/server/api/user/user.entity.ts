@@ -1,8 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToMany } from "typeorm";
+import { Exclude } from 'class-transformer';
+import { Field, ObjectType } from 'type-graphql';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Session } from "../auth/session.entity";
-import { Exclude } from 'class-transformer'
-import { ObjectType, Field } from 'type-graphql'
-import { Group } from "../group/group.entity";
+import { GroupMember } from "../group/groupMember.entity";
 
 @ObjectType()
 @Entity()
@@ -51,10 +51,8 @@ export class User {
   @OneToMany(type => Session, session => session.user)
   sessions: Session[]
 
-  @OneToMany(type => Group, group => group.owner)
-  ownedGroups: Group[]
-
-  @ManyToMany(type => Group, group => group.members)
-  groups: Group[]
+  @Field(type => [GroupMember])
+  @OneToMany(type => GroupMember, gm => gm.member)
+  groups: GroupMember[]
 
 }

@@ -1,6 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn } from "typeorm";
-import { ObjectType, Field, Int } from 'type-graphql'
-import { User } from "../user/user.entity";
+import { Field, Int, ObjectType } from 'type-graphql';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { GroupMember } from "./groupMember.entity";
 
 @ObjectType()
 @Entity()
@@ -30,10 +30,8 @@ export class Group {
   @UpdateDateColumn()
   updated: Date
 
-  @ManyToOne(type => User, user => user.ownedGroups)
-  owner: User
+  @Field(type => [GroupMember])
+  @OneToMany(type => GroupMember, gm => gm.group)
+  members: GroupMember[]
 
-  @ManyToMany(type => User, user => user.groups)
-  @JoinTable()
-  members: User[]
 }

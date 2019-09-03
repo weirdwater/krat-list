@@ -4,6 +4,7 @@ import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { none, some, Maybe } from 'src/shared/fun';
 import { UserWithEmailExistsException } from 'src/server/exceptions/userWithEmailExists.exception';
+import { GroupMember } from '../group/groupMember.entity';
 
 @Injectable()
 export class UserService {
@@ -11,10 +12,12 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(GroupMember)
+    private readonly memberRepository: Repository<GroupMember>,
   ) {}
 
   async findOne(u: Partial<User>): Promise<Maybe<User>> {
-    const user = await this.userRepository.findOne()
+    const user = await this.userRepository.findOne(u)
     return user === undefined ? none() : some(user)
   }
 
@@ -27,6 +30,13 @@ export class UserService {
       }
       throw e
     }
+  }
+
+  getGroups(user: User): Promise<GroupMember[]> {
+    return this.memberRepository.find({
+      where: { member: user },
+      relations: [ 'group' ]
+    })
   }
 
 }

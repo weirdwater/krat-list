@@ -5,10 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
 import { AuthModule } from '../auth/auth.module';
 import { GroupResolver } from './group.resolver';
+import { GroupMember } from './groupMember.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Group]),
+    TypeOrmModule.forFeature([Group, GroupMember]),
     PassportModule.register({ defaultStrategy: 'bearer' }),
     AuthModule
   ],
