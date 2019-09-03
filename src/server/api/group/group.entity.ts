@@ -1,24 +1,32 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { ObjectType, Field, Int } from 'type-graphql'
 import { User } from "../user/user.entity";
 
+@ObjectType()
 @Entity()
 export class Group {
 
-  @PrimaryGeneratedColumn({ type: 'uuid'})
+  @Field()
+  @PrimaryGeneratedColumn('uuid')
   id: string
 
+  @Field()
   @Column()
   name: string
 
+  @Field(type => Int)
   @Column()
   unitssPerCase: number
 
+  @Field(type => Int)
   @Column()
   volumePerUnitMl: number
 
+  @Field(type => Date)
   @CreateDateColumn()
   created: Date
 
+  @Field(type => Date)
   @UpdateDateColumn()
   updated: Date
 
